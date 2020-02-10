@@ -4,9 +4,9 @@ import pathlib
 
 import numpy as np
 import pandas as pd
+from translate.storage.tmx import tmxfile
 
-from algo.translation_scores import calculate_bleu_score
-from parsing.tmx import tmxfile
+from algo.translation_scores import calculate_bleu_score, calculate_meteor_score
 
 configParser = configparser.RawConfigParser()
 configFilePath = "config.txt"
@@ -34,6 +34,7 @@ source_sentences = list()
 target_sentences = list()
 retrived_target_sentences = list()
 bleu_scores = list()
+meteor_scores = list()
 
 tmx_file_path = "result/ES-ES/unapproved.tmx"
 
@@ -50,10 +51,12 @@ with open(tmx_file_path, 'rb') as fin:
         if index > -1:
             target_sentence = test_target_sentences[index]
             bleu_score = calculate_bleu_score(target_sentence, retrieved_target_sentence)
+            meteor_score = calculate_meteor_score(target_sentence, retrieved_target_sentence)
             source_sentences.append(source_sentence)
             target_sentences.append(target_sentence)
             retrived_target_sentences.append(retrieved_target_sentence)
             bleu_scores.append(bleu_score)
+            meteor_scores.append(meteor_score)
 
         if i % 10 == 0:
             print(i)
@@ -74,8 +77,8 @@ print(target_sentences)
 #     writer.writerows(zip(source_sentences, target_sentences))
 
 okapi_results = pd.DataFrame(
-    np.column_stack([source_sentences, target_sentences, retrived_target_sentences, bleu_scores]),
-    columns=['source', 'target', 'retrieved_target_sentences', 'bleu_scores'])
+    np.column_stack([source_sentences, target_sentences, retrived_target_sentences, bleu_scores, meteor_scores]),
+    columns=['source', 'target', 'retrieved_target_sentences', 'bleu_scores', 'meteor_scores'])
 
 pathlib.Path(os.path.join(result_folder, target_name)).mkdir(parents=True, exist_ok=True)
 okapi_results.to_csv(os.path.join(result_folder, target_name, result_file), sep='\t', index=False)

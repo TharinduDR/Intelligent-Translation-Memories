@@ -1,5 +1,5 @@
 [data-preparing-config]
-FOLDER_PATH=/home/tharindu/Projects/Data/dgt-translation-memory/2019/Vol_2018_3/
+FOLDER_PATH=/home/tharindu/Projects/Data/dgt-translation-memory/2019/Vol_2018_1/
 DATA_FOLDER=data
 PATTERN=*.tmx
 SOURCE=EN-GB

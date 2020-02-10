@@ -5,7 +5,7 @@ from fnmatch import fnmatch
 
 import pandas as pd
 
-from parsing.tmx import tmxfile
+from parsing.xml_parser import get_sentences
 
 configParser = configparser.RawConfigParser()
 configFilePath = "config.txt"
@@ -24,13 +24,12 @@ source_sentences = list()
 target_sentences = list()
 
 for tmx_file_path in tmx_file_paths:
-    with open(tmx_file_path, 'rb') as fin:
-        print(tmx_file_path)
-        tmx_file = tmxfile(fin, source, target)
-        for node in tmx_file.unit_iter():
-            source_sentences.append(node.getsource().strip())
-            target_sentences.append(node.gettarget().strip())
-        fin.close()
+    print(tmx_file_path)
+    source_sentences_temp, target_sentences_temp = get_sentences(path=tmx_file_path, source_language=source,
+                                                                 target_language=target)
+
+    source_sentences = source_sentences + source_sentences_temp
+    target_sentences = target_sentences + target_sentences_temp
 
 assert (len(source_sentences) == len(target_sentences))
 
@@ -39,5 +38,5 @@ pathlib.Path(os.path.join(data_folder, target)).mkdir(parents=True, exist_ok=Tru
 src_data = pd.DataFrame(source_sentences, columns=['source'])
 target_data = pd.DataFrame(target_sentences, columns=['target'])
 
-src_data.to_csv(os.path.join(data_folder, target, "src_volume_3.tsv"), sep='\t', index=False, header=True)
-target_data.to_csv(os.path.join(data_folder, target, "target_volume_3.tsv"), sep='\t', index=False, header=True)
+src_data.to_csv(os.path.join(data_folder, target, "src_volume_1.tsv"), sep='\t', index=False, header=True)
+target_data.to_csv(os.path.join(data_folder, target, "target_volume_1.tsv"), sep='\t', index=False, header=True)
